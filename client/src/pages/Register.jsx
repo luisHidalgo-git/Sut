@@ -23,7 +23,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register, setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -54,9 +54,11 @@ const Register = () => {
     }
 
     try {
-      await register(submitData);
+      const response = await register(submitData);
+      // Establecer el usuario en el contexto después del registro
+      setUser(response.user);
       setSuccess('Registro exitoso. Redirigiendo...');
-      setTimeout(() => navigate('/login'), 1500);
+      setTimeout(() => navigate('/jobs'), 1500);
     } catch (err) {
       const errorData = err.response?.data;
       if (errorData) {

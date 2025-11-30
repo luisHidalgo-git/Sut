@@ -13,6 +13,8 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            # Hacer login automático después del registro
+            login(request, user)
             return Response({
                 'message': 'Usuario registrado exitosamente',
                 'user': UserSerializer(user).data
