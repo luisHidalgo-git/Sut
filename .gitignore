@@ -1,0 +1,27 @@
+# Python/Django
+venv/
+*.pyc
+__pycache__/
+*.sqlite3
+db.sqlite3
+.env
+settings_local.py
+media/
+staticfiles/
+
+# Node/React
+node_modules/
+build/
+dist/
+npm-debug.log*
+yarn-error.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Entorno y Editor
+.DS_Store
+Thumbs.db
+*~
+.vscode/
