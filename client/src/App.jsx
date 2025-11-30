@@ -10,6 +10,8 @@ import MyApplications from './pages/MyApplications';
 import CreateJob from './pages/CreateJob';
 import MyJobs from './pages/MyJobs';
 import JobApplications from './pages/JobApplications';
+import StudentProfile from './pages/StudentProfile';
+import CompanyProfile from './pages/CompanyProfile';
 import './App.css';
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
               <Route path="/my-applications" element={<MyApplications />} />
               <Route path="/create-job" element={<CreateJob />} />
               <Route path="/my-jobs" element={<MyJobs />} />
+              <Route path="/profile/student" element={<StudentProfile />} />
+              <Route path="/profile/company" element={<CompanyProfile />} />
             </Routes>
           </main>
         </div>
@@ -38,3 +42,4 @@ function App() {
 }
 
 export default App;
+

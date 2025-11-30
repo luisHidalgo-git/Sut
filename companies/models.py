@@ -21,6 +21,7 @@ class CompanyProfile(models.Model):
     website = models.URLField(blank=True)
     address = models.TextField()
     logo_url = models.URLField(blank=True)
+    profile_picture = models.ImageField(upload_to='company_profiles/', blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -50,6 +50,7 @@ class StudentProfile(models.Model):
     skills = models.TextField(blank=True)
     cv_url = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
+    profile_picture = models.ImageField(upload_to='student_profiles/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

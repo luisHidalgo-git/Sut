@@ -37,14 +37,14 @@ const Navbar = () => {
               {user.user_type === 'student' && (
                 <>
                   <Link to="/my-applications" className="nav-link">Mis Aplicaciones</Link>
-                  <Link to="/profile" className="nav-link">Mi Perfil</Link>
+                  <Link to="/profile/student" className="nav-link">Mi Perfil</Link>
                 </>
               )}
 
               {user.user_type === 'company' && (
                 <>
                   <Link to="/my-jobs" className="nav-link">Mis Empleos</Link>
-                  <Link to="/company-profile" className="nav-link">Mi Empresa</Link>
+                  <Link to="/profile/company" className="nav-link">Mi Empresa</Link>
                 </>
               )}
 

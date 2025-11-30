@@ -10,6 +10,18 @@ const api = axios.create({
   },
 });
 
+// Para upload de archivos
+export const createFormDataRequest = (endpoint, formData) => {
+  return axios.create({
+    baseURL: API_BASE_URL,
+    withCredentials: true,
+  }).post(endpoint, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
 export const auth = {
   register: (data) => api.post('/students/auth/register/', data),
   login: (data) => api.post('/students/auth/login/', data),
@@ -21,6 +33,8 @@ export const students = {
   getProfile: () => api.get('/students/profiles/'),
   createProfile: (data) => api.post('/students/profiles/', data),
   updateProfile: (id, data) => api.patch(`/students/profiles/${id}/`, data),
+  getMyProfile: () => api.get('/students/profiles/my_profile/'),
+  updateMyProfile: (formData) => createFormDataRequest('/students/profiles/update_my_profile/', formData),
 };
 
 export const companies = {
@@ -28,6 +42,8 @@ export const companies = {
   getProfile: () => api.get('/companies/profiles/'),
   createProfile: (data) => api.post('/companies/profiles/', data),
   updateProfile: (id, data) => api.patch(`/companies/profiles/${id}/`, data),
+  getMyProfile: () => api.get('/companies/profiles/my_profile/'),
+  updateMyProfile: (formData) => createFormDataRequest('/companies/profiles/update_my_profile/', formData),
 };
 
 export const jobs = {
