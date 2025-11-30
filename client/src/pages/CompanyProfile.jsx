@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { companies } from '../services/api';
+import ImageCropModal from '../components/ImageCropModal';
 import './Profile.css';
 
 const CompanyProfile = () => {
@@ -11,6 +12,8 @@ const CompanyProfile = () => {
   const [success, setSuccess] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [formData, setFormData] = useState({
     company_name: '',
     industry: '',
@@ -59,16 +62,41 @@ const CompanyProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        profile_picture: file,
-      }));
+      if (!file.type.startsWith('image/')) {
+        setError('Por favor selecciona un archivo de imagen válido');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result);
+        setSelectedImage(reader.result);
+        setShowCropModal(true);
       };
       reader.readAsDataURL(file);
     }
+    e.target.value = '';
+  };
+
+  const handleCropSave = (blob) => {
+    const file = new File([blob], 'profile_picture.jpg', { type: 'image/jpeg' });
+    setFormData((prev) => ({
+      ...prev,
+      profile_picture: file,
+    }));
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(blob);
+
+    setShowCropModal(false);
+    setSelectedImage(null);
+  };
+
+  const handleCropCancel = () => {
+    setShowCropModal(false);
+    setSelectedImage(null);
   };
 
   const handleSubmit = async (e) => {
@@ -127,6 +155,14 @@ const CompanyProfile = () => {
     <div className="profile-container">
       {error && <div className="error">{error}</div>}
       {success && <div className="success">{success}</div>}
+
+      <ImageCropModal
+        isOpen={showCropModal}
+        imageSrc={selectedImage}
+        onSave={handleCropSave}
+        onCancel={handleCropCancel}
+        aspectRatio={1}
+      />
 
       <div className="profile-header">
         <div className="profile-cover"></div>
