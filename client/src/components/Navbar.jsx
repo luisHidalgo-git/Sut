@@ -1,13 +1,25 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ConfirmModal from './ConfirmModal';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setShowLogoutConfirm(false);
     await logout();
     navigate('/login');
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   return (
@@ -36,7 +48,7 @@ const Navbar = () => {
                 </>
               )}
 
-              <button onClick={handleLogout} className="btn btn-secondary">
+              <button onClick={handleLogoutClick} className="btn btn-secondary">
                 Cerrar Sesión
               </button>
             </>
@@ -48,6 +60,17 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showLogoutConfirm}
+        title="Cerrar Sesión"
+        message="¿Estás seguro de que deseas cerrar sesión?"
+        onConfirm={handleConfirmLogout}
+        onCancel={handleCancelLogout}
+        confirmText="Sí, cerrar sesión"
+        cancelText="Cancelar"
+        isDangerous={true}
+      />
     </nav>
   );
 };
