@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .models import CompanyProfile
 from .serializers import CompanyProfileSerializer
 
@@ -11,7 +11,7 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
     queryset = CompanyProfile.objects.all()
     serializer_class = CompanyProfileSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get_queryset(self):
         if self.request.user.user_type == 'company':
@@ -34,7 +34,7 @@ class CompanyProfileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-    @action(detail=False, methods=['put', 'patch'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
     def update_my_profile(self, request):
         """Actualizar el perfil de la empresa autenticada (incluye foto)"""
         try:

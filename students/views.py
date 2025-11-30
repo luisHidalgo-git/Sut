@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth import authenticate, login, logout
 from .models import User, StudentProfile
 from .serializers import UserSerializer, StudentProfileSerializer, UserRegistrationSerializer
@@ -14,7 +14,6 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            # Hacer login automático después del registro
             login(request, user)
             return Response({
                 'message': 'Usuario registrado exitosamente',
@@ -70,7 +69,7 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
     queryset = StudentProfile.objects.all()
     serializer_class = StudentProfileSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get_queryset(self):
         if self.request.user.user_type == 'student':
@@ -93,7 +92,7 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-    @action(detail=False, methods=['put', 'patch'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
     def update_my_profile(self, request):
         """Actualizar el perfil del estudiante autenticado (incluye foto)"""
         try:
