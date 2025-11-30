@@ -8,35 +8,55 @@ from .serializers import UserSerializer, StudentProfileSerializer, UserRegistrat
 
 
 class AuthViewSet(viewsets.ViewSet):
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny], authentication_classes=[])
     def register(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             return Response({
-                'message': 'User registered successfully',
+                'message': 'Usuario registrado exitosamente',
                 'user': UserSerializer(user).data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny], authentication_classes=[])
     def login(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        user = authenticate(request, username=email, password=password)
+        if not email or not password:
+            return Response(
+                {'error': 'Email y contraseña son requeridos'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = authenticate(request, username=email.lower(), password=password)
         if user:
+            if not user.is_active:
+                return Response(
+                    {'error': 'Esta cuenta ha sido desactivada'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
             login(request, user)
             return Response({
-                'message': 'Login successful',
+                'message': 'Inicio de sesión exitoso',
                 'user': UserSerializer(user).data
             })
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {'error': 'Credenciales inválidas'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
 
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['post'])
     def logout(self, request):
-        logout(request)
-        return Response({'message': 'Logout successful'})
+        try:
+            logout(request)
+            return Response({'message': 'Sesión cerrada exitosamente'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'error': 'Error al cerrar sesión'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):

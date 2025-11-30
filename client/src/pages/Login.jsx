@@ -28,7 +28,10 @@ const Login = () => {
       await login(formData);
       navigate('/jobs');
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
+      const errorMessage =
+        err.response?.data?.error ||
+        'Error al iniciar sesión. Verifica tus credenciales.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

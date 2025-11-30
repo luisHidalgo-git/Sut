@@ -11,8 +11,17 @@ const Register = () => {
     last_name: '',
     user_type: 'student',
     phone: '',
+    university: '',
+    career: '',
+    semester: '',
+    graduation_year: '',
+    company_name: '',
+    industry: 'tech',
+    description: '',
+    address: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -27,13 +36,41 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
+    const submitData = { ...formData };
+
+    if (formData.user_type === 'student') {
+      delete submitData.company_name;
+      delete submitData.industry;
+      delete submitData.description;
+      delete submitData.address;
+    } else if (formData.user_type === 'company') {
+      delete submitData.university;
+      delete submitData.career;
+      delete submitData.semester;
+      delete submitData.graduation_year;
+    }
+
     try {
-      await register(formData);
-      navigate('/login');
+      await register(submitData);
+      setSuccess('Registro exitoso. Redirigiendo...');
+      setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
-      setError(err.response?.data?.password?.[0] || err.response?.data?.email?.[0] || 'Error al registrarse');
+      const errorData = err.response?.data;
+      if (errorData) {
+        const errorMessage =
+          errorData.email?.[0] ||
+          errorData.password?.[0] ||
+          errorData.student_profile ||
+          errorData.company_profile ||
+          errorData.non_field_errors?.[0] ||
+          'Error al registrarse. Verifica los campos.';
+        setError(errorMessage);
+      } else {
+        setError('Error al conectar con el servidor');
+      }
     } finally {
       setLoading(false);
     }
@@ -46,6 +83,7 @@ const Register = () => {
           <h2>Crear Cuenta</h2>
 
           {error && <div className="alert alert-error">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
@@ -136,6 +174,124 @@ const Register = () => {
                 minLength={8}
               />
             </div>
+
+            {formData.user_type === 'student' && (
+              <>
+                <div className="form-group">
+                  <label htmlFor="university">Universidad *</label>
+                  <input
+                    type="text"
+                    id="university"
+                    name="university"
+                    value={formData.university}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="career">Carrera *</label>
+                  <input
+                    type="text"
+                    id="career"
+                    name="career"
+                    value={formData.career}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="semester">Semestre *</label>
+                    <input
+                      type="number"
+                      id="semester"
+                      name="semester"
+                      value={formData.semester}
+                      onChange={handleChange}
+                      required
+                      min="1"
+                      max="12"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="graduation_year">Año de Graduación *</label>
+                    <input
+                      type="number"
+                      id="graduation_year"
+                      name="graduation_year"
+                      value={formData.graduation_year}
+                      onChange={handleChange}
+                      required
+                      min="2024"
+                      max="2035"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {formData.user_type === 'company' && (
+              <>
+                <div className="form-group">
+                  <label htmlFor="company_name">Nombre de la Empresa *</label>
+                  <input
+                    type="text"
+                    id="company_name"
+                    name="company_name"
+                    value={formData.company_name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="industry">Industria *</label>
+                  <select
+                    id="industry"
+                    name="industry"
+                    value={formData.industry}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="tech">Tecnología</option>
+                    <option value="finance">Finanzas</option>
+                    <option value="healthcare">Salud</option>
+                    <option value="education">Educación</option>
+                    <option value="retail">Retail</option>
+                    <option value="manufacturing">Manufactura</option>
+                    <option value="services">Servicios</option>
+                    <option value="other">Otro</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="description">Descripción de la Empresa *</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="address">Dirección *</label>
+                  <textarea
+                    id="address"
+                    name="address"
+                    rows="2"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </>
+            )}
 
             <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
               {loading ? 'Registrando...' : 'Registrarse'}
