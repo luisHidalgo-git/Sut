@@ -67,17 +67,8 @@
 
 .file-input-wrapper {
   position: relative;
-  overflow: hidden;
   display: inline-block;
   width: 100%;
-}
-
-.file-input-wrapper input[type="file"] {
-  position: absolute;
-  left: -9999px;
-  opacity: 0;
-  width: 0;
-  height: 0;
 }
 
 .upload-button {

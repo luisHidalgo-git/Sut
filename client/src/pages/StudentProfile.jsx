@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { students } from '../services/api';
 import ImageCropModal from '../components/ImageCropModal';
@@ -14,6 +14,7 @@ const StudentProfile = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     university: '',
     career: '',
@@ -79,6 +80,10 @@ const StudentProfile = () => {
       reader.readAsDataURL(file);
     }
     e.target.value = '';
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleCropSave = (blob) => {
@@ -173,13 +178,15 @@ const StudentProfile = () => {
             )}
             {isEditing && (
               <div className="file-input-wrapper">
-                <button className="upload-button">
+                <button type="button" className="upload-button" onClick={handleUploadClick}>
                   📷 Cambiar foto
                 </button>
                 <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
+                  style={{ display: 'none' }}
                 />
               </div>
             )}
