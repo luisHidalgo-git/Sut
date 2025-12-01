@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { companies } from '../services/api';
 import ImageCropModal from '../components/ImageCropModal';
-import './Profile.css';
+import '../styles/Profile.css';
 
 const CompanyProfile = () => {
   const { user } = useAuth();
