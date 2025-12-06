@@ -118,6 +118,10 @@ const CompanyProfile = () => {
 
       const response = await companies.updateMyProfile(submitData);
       setProfile(response.data);
+      setFormData({
+        ...formData,
+        profile_picture: null,
+      });
       setIsEditing(false);
       setPreviewImage(null);
       setSuccess('Perfil actualizado correctamente');
@@ -135,8 +139,8 @@ const CompanyProfile = () => {
     if (previewImage) {
       return previewImage;
     }
-    if (profile?.profile_picture) {
-      return `http://localhost:8000${profile.profile_picture}`;
+    if (profile?.profile_picture_url) {
+      return profile.profile_picture_url;
     }
     return null;
   };

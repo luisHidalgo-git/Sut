@@ -12,11 +12,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    profile_picture_url = serializers.SerializerMethodField()
 
     class Meta:
         model = StudentProfile
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_profile_picture_url(self, obj):
+        if obj.profile_picture:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.profile_picture.url)
+            return obj.profile_picture.url
+        return None
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
