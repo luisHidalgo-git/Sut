@@ -58,7 +58,7 @@ const Register = () => {
       // Establecer el usuario en el contexto después del registro
       setUser(response.user);
       setSuccess('Registro exitoso. Redirigiendo...');
-      setTimeout(() => navigate('/jobs'), 1500);
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       const errorData = err.response?.data;
       if (errorData) {

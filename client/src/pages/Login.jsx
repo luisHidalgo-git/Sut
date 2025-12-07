@@ -26,7 +26,7 @@ const Login = () => {
 
     try {
       await login(formData);
-      navigate('/jobs');
+      navigate('/');
     } catch (err) {
       const errorMessage =
         err.response?.data?.error ||
