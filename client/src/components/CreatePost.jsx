@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { api } from '../services/api';
+import axios from 'axios';
 import '../styles/CreatePost.css';
 
 const CreatePost = ({ onPostCreated }) => {
   const { user } = useAuth();
   const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
@@ -14,23 +15,43 @@ const CreatePost = ({ onPostCreated }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
-        setImageUrl(event.target.result);
+        setImagePreview(event.target.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const removeImage = () => {
-    setImageUrl('');
-    fileInputRef.current.value = '';
+    setImageFile(null);
+    setImagePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const getCsrfToken = () => {
+    const name = 'csrftoken';
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!content.trim() && !imageUrl) {
+    if (!content.trim() && !imageFile) {
       setError('Debes escribir algo o adjuntar una imagen');
       return;
     }
@@ -39,14 +60,25 @@ const CreatePost = ({ onPostCreated }) => {
     setError('');
 
     try {
-      const postData = {
-        content: content.trim(),
-        image_url: imageUrl || null,
-      };
+      const formData = new FormData();
+      formData.append('content', content.trim());
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
 
-      await api.post('/posts/', postData);
+      const csrfToken = getCsrfToken();
+
+      await axios.post('http://localhost:8000/api/posts/', formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          ...(csrfToken && { 'X-CSRFToken': csrfToken }),
+        },
+      });
+
       setContent('');
-      setImageUrl('');
+      setImageFile(null);
+      setImagePreview('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -84,9 +116,9 @@ const CreatePost = ({ onPostCreated }) => {
           rows="3"
         />
 
-        {imageUrl && (
+        {imagePreview && (
           <div className="image-preview">
-            <img src={imageUrl} alt="Preview" />
+            <img src={imagePreview} alt="Preview" />
             <button
               type="button"
               className="remove-image"
