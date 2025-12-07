@@ -86,4 +86,5 @@ export const applications = {
   updateStatus: (id, status) => api.patch(`/jobs/applications/${id}/update_status/`, { status }),
 };
 
+export { api };
 export default api;
