@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { students, companies } from '../services/api';
 import axios from 'axios';
 import '../styles/CreatePost.css';
 
@@ -10,7 +11,28 @@ const CreatePost = ({ onPostCreated }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfilePicture();
+    }
+  }, [user]);
+
+  const fetchProfilePicture = async () => {
+    try {
+      if (user.user_type === 'student') {
+        const response = await students.getMyProfile();
+        setProfilePictureUrl(response.data.profile_picture_url);
+      } else if (user.user_type === 'company') {
+        const response = await companies.getMyProfile();
+        setProfilePictureUrl(response.data.profile_picture_url);
+      }
+    } catch (err) {
+      console.error('Error fetching profile picture:', err);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -99,7 +121,15 @@ const CreatePost = ({ onPostCreated }) => {
     <div className="create-post">
       <div className="create-post-header">
         <div className="user-info">
-          <div className="avatar">{user.first_name?.charAt(0)}{user.last_name?.charAt(0)}</div>
+          {profilePictureUrl ? (
+            <img
+              src={profilePictureUrl}
+              alt="Profile"
+              className="avatar avatar-img"
+            />
+          ) : (
+            <div className="avatar">{user.first_name?.charAt(0)}{user.last_name?.charAt(0)}</div>
+          )}
           <div className="user-details">
             <h4>{user.first_name} {user.last_name}</h4>
             <span className="user-type">{user.user_type === 'student' ? 'Estudiante' : 'Empresa'}</span>

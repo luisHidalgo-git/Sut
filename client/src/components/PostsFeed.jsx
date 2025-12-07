@@ -85,9 +85,17 @@ const PostsFeed = ({ refreshTrigger }) => {
         <div key={post.id} className="post-card">
           <div className="post-header">
             <div className="post-author">
-              <div className="author-avatar">
-                {post.user_name?.charAt(0)}{post.user_name?.split(' ')[1]?.charAt(0)}
-              </div>
+              {post.user_profile_picture_url ? (
+                <img
+                  src={post.user_profile_picture_url}
+                  alt={post.user_name}
+                  className="author-avatar author-avatar-img"
+                />
+              ) : (
+                <div className="author-avatar">
+                  {post.user_name?.charAt(0)}{post.user_name?.split(' ')[1]?.charAt(0)}
+                </div>
+              )}
               <div className="author-info">
                 <h3>{post.user_name}</h3>
                 <div className="author-meta">

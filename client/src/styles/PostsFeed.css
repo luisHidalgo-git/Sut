@@ -46,6 +46,10 @@
   flex-shrink: 0;
 }
 
+.author-avatar-img {
+  object-fit: cover;
+}
+
 .author-info h3 {
   margin: 0 0 4px 0;
   font-size: 15px;
@@ -164,7 +168,8 @@
     padding: 12px 16px;
   }
 
-  .author-avatar {
+  .author-avatar,
+  .author-avatar-img {
     width: 40px;
     height: 40px;
     font-size: 14px;

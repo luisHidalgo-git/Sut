@@ -30,6 +30,11 @@
   justify-content: center;
   font-weight: 600;
   font-size: 18px;
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  object-fit: cover;
 }
 
 .user-details h4 {
