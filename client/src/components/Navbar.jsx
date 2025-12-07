@@ -26,7 +26,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          JobConnect
+          SUT
         </Link>
 
         <div className="nav-menu">

@@ -14,28 +14,20 @@ const Home = () => {
 
   return (
     <div className="home">
-      <section className="hero">
-        <div className="hero-content">
-          <h1>Conecta tu talento con oportunidades</h1>
-          <p>La plataforma de empleo que une a estudiantes universitarios con las mejores empresas</p>
+      {!user && (
+        <section className="hero">
+          <div className="hero-content">
+            <h1>Conecta tu talento con oportunidades</h1>
+            <p>La plataforma de empleo que une a estudiantes universitarios con las mejores empresas</p>
 
-          {!user && (
             <div className="hero-actions">
               <Link to="/register" className="btn btn-primary btn-large">
                 Comenzar Ahora
               </Link>
             </div>
-          )}
-
-          {user && (
-            <div className="hero-actions">
-              <Link to="/jobs" className="btn btn-primary btn-large">
-                Explorar Oportunidades
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {user && (
         <section className="feed-section">
@@ -49,7 +41,7 @@ const Home = () => {
       {!user && (
         <section className="features">
           <div className="container">
-            <h2>¿Por qué JobConnect?</h2>
+            <h2>¿Por qué SUT?</h2>
             <div className="features-grid">
               <div className="feature-card">
                 <div className="feature-icon">🎓</div>
