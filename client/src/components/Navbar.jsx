@@ -10,6 +10,7 @@ const Navbar = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -82,12 +83,35 @@ const Navbar = () => {
     return `${firstInitial}${lastInitial}`.toUpperCase();
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/jobs?search=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm('');
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
           SUT
         </Link>
+
+        {user && (
+          <form onSubmit={handleSearch} className="nav-search-form">
+            <input
+              type="text"
+              placeholder="Buscar empleos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="nav-search-input"
+            />
+            <button type="submit" className="nav-search-button">
+              Buscar
+            </button>
+          </form>
+        )}
 
         <div className="nav-menu">
           {user && <Link to="/jobs" className="nav-link">Empleos</Link>}

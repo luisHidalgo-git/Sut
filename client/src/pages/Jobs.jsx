@@ -1,26 +1,53 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { jobs } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const Jobs = () => {
   const [jobsList, setJobsList] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  const searchTerm = searchParams.get('search') || '';
 
   useEffect(() => {
     fetchJobs();
   }, []);
 
+  useEffect(() => {
+    if (searchTerm) {
+      filterJobs(searchTerm);
+    } else {
+      setFilteredJobs(jobsList);
+    }
+  }, [searchTerm, jobsList]);
+
   const fetchJobs = async () => {
     try {
       const response = await jobs.getAll();
       setJobsList(response.data);
+      setFilteredJobs(response.data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const filterJobs = (term) => {
+    const lowerTerm = term.toLowerCase();
+    const filtered = jobsList.filter((job) => {
+      return (
+        job.title.toLowerCase().includes(lowerTerm) ||
+        job.description.toLowerCase().includes(lowerTerm) ||
+        job.location.toLowerCase().includes(lowerTerm) ||
+        job.company.company_name.toLowerCase().includes(lowerTerm) ||
+        job.requirements.toLowerCase().includes(lowerTerm) ||
+        job.responsibilities.toLowerCase().includes(lowerTerm)
+      );
+    });
+    setFilteredJobs(filtered);
   };
 
   const getJobTypeLabel = (type) => {
@@ -40,7 +67,14 @@ const Jobs = () => {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1>Oportunidades Laborales</h1>
+        <div>
+          <h1>Oportunidades Laborales</h1>
+          {searchTerm && (
+            <p className="subtitle">
+              {filteredJobs.length} resultado{filteredJobs.length !== 1 ? 's' : ''} para "{searchTerm}"
+            </p>
+          )}
+        </div>
         {user?.user_type === 'company' && (
           <Link to="/create-job" className="btn btn-primary">
             Publicar Empleo
@@ -49,10 +83,21 @@ const Jobs = () => {
       </div>
 
       <div className="jobs-grid">
-        {jobsList.length === 0 ? (
-          <p className="no-data">No hay empleos disponibles en este momento.</p>
+        {filteredJobs.length === 0 ? (
+          <div className="no-data">
+            {searchTerm ? (
+              <>
+                <p>No se encontraron empleos que coincidan con "{searchTerm}"</p>
+                <Link to="/jobs" className="btn btn-primary">
+                  Ver todos los empleos
+                </Link>
+              </>
+            ) : (
+              <p>No hay empleos disponibles en este momento.</p>
+            )}
+          </div>
         ) : (
-          jobsList.map((job) => (
+          filteredJobs.map((job) => (
             <div key={job.id} className="job-card">
               <div className="job-header">
                 <h3>{job.title}</h3>
