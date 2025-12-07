@@ -1,8 +1,16 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import CreatePost from '../components/CreatePost';
+import PostsFeed from '../components/PostsFeed';
 
 const Home = () => {
   const { user } = useAuth();
+  const [refreshFeed, setRefreshFeed] = useState(0);
+
+  const handlePostCreated = () => {
+    setRefreshFeed(prev => prev + 1);
+  };
 
   return (
     <div className="home">
@@ -29,30 +37,41 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="features">
-        <div className="container">
-          <h2>¿Por qué JobConnect?</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">🎓</div>
-              <h3>Para Estudiantes</h3>
-              <p>Encuentra prácticas profesionales, empleos de medio tiempo e inicios de carrera perfectos para ti</p>
-            </div>
+      {user && (
+        <section className="feed-section">
+          <div className="container feed-container">
+            <CreatePost onPostCreated={handlePostCreated} />
+            <PostsFeed refreshTrigger={refreshFeed} />
+          </div>
+        </section>
+      )}
 
-            <div className="feature-card">
-              <div className="feature-icon">🏢</div>
-              <h3>Para Empresas</h3>
-              <p>Accede a talento joven y motivado de las mejores universidades</p>
-            </div>
+      {!user && (
+        <section className="features">
+          <div className="container">
+            <h2>¿Por qué JobConnect?</h2>
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon">🎓</div>
+                <h3>Para Estudiantes</h3>
+                <p>Encuentra prácticas profesionales, empleos de medio tiempo e inicios de carrera perfectos para ti</p>
+              </div>
 
-            <div className="feature-card">
-              <div className="feature-icon">🚀</div>
-              <h3>Proceso Simplificado</h3>
-              <p>Aplica con un clic y gestiona todas tus aplicaciones en un solo lugar</p>
+              <div className="feature-card">
+                <div className="feature-icon">🏢</div>
+                <h3>Para Empresas</h3>
+                <p>Accede a talento joven y motivado de las mejores universidades</p>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🚀</div>
+                <h3>Proceso Simplificado</h3>
+                <p>Aplica con un clic y gestiona todas tus aplicaciones en un solo lugar</p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 };

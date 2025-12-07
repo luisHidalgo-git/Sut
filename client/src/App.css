@@ -733,6 +733,20 @@
   margin-bottom: 1.5rem;
 }
 
+.feed-section {
+  background-color: var(--light-bg);
+  padding: 2rem;
+}
+
+.feed-container {
+  max-width: 800px;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width: 768px) {
   .nav-menu {
     flex-wrap: wrap;
@@ -776,5 +790,9 @@
   .application-info {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .feed-section {
+    padding: 1rem;
   }
 }
