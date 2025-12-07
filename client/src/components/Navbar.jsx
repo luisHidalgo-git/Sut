@@ -30,7 +30,7 @@ const Navbar = () => {
         </Link>
 
         <div className="nav-menu">
-          <Link to="/jobs" className="nav-link">Empleos</Link>
+          {user && <Link to="/jobs" className="nav-link">Empleos</Link>}
 
           {user ? (
             <>

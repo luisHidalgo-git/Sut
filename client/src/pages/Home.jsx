@@ -16,9 +16,6 @@ const Home = () => {
               <Link to="/register" className="btn btn-primary btn-large">
                 Comenzar Ahora
               </Link>
-              <Link to="/jobs" className="btn btn-secondary btn-large">
-                Ver Empleos
-              </Link>
             </div>
           )}
 
