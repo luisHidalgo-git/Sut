@@ -100,12 +100,26 @@ const Jobs = () => {
           filteredJobs.map((job) => (
             <div key={job.id} className="job-card">
               <div className="job-header">
-                <h3>{job.title}</h3>
+                <div className="job-header-left">
+                  {job.company.profile_picture_url ? (
+                    <img
+                      src={job.company.profile_picture_url}
+                      alt={job.company.company_name}
+                      className="job-company-logo"
+                    />
+                  ) : (
+                    <div className="job-company-logo-placeholder">
+                      🏢
+                    </div>
+                  )}
+                  <div className="job-title-company">
+                    <h3>{job.title}</h3>
+                    <div className="job-company">
+                      <strong>{job.company.company_name}</strong>
+                    </div>
+                  </div>
+                </div>
                 <span className="job-type-badge">{getJobTypeLabel(job.job_type)}</span>
-              </div>
-
-              <div className="job-company">
-                <strong>{job.company.company_name}</strong>
               </div>
 
               <div className="job-location">

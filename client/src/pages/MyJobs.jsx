@@ -55,6 +55,17 @@ const MyJobs = () => {
         <div className="jobs-list">
           {myJobs.map((job) => (
             <div key={job.id} className="job-card-horizontal">
+              {job.company.profile_picture_url ? (
+                <img
+                  src={job.company.profile_picture_url}
+                  alt={job.company.company_name}
+                  className="job-company-logo-large"
+                />
+              ) : (
+                <div className="job-company-logo-placeholder-large">
+                  🏢
+                </div>
+              )}
               <div className="job-info">
                 <div className="job-header">
                   <h3>{job.title}</h3>
